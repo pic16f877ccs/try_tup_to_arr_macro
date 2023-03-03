@@ -18,5 +18,5 @@ proc-macro = true
 [dependencies]
 
 [features]
-try_from_tup_8 = []
-try_from_tup_16 = []
+try_tup_to_arr_8 = []
+try_tup_to_arr_16 = []
