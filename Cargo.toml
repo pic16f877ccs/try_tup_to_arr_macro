@@ -1,0 +1,22 @@
+[package]
+name = "try_tup_to_arr_macro"
+version = "0.1.0"
+edition = "2021"
+authors = ["Karl Wulfert <pic16f877.ccs@emailn.de>"]
+readme = "README.md"
+repository = "https://github.com/pic16f877ccs/try_tup_to_arr_macro"
+homepage = "https://github.com/pic16f877ccs/try_tup_to_arr_macro"
+license = "GPL-3.0-or-later"
+description = "Library for implement from tuple trait"
+keywords = ["proc-macro", "no-std", "try-tuple-convert", "tuple-to-array"]
+categories = ["rust-patterns"]
+
+[lib]
+name = "try_tup_to_arr_macro"
+proc-macro = true
+
+[dependencies]
+
+[features]
+try_from_tup_8 = []
+try_from_tup_16 = []
