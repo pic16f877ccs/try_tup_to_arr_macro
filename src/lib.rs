@@ -4,15 +4,20 @@
 #![allow(dead_code)]
 
 extern crate proc_macro;
+use core::fmt::Write;
 use proc_macro::TokenStream;
 
 fn generic_type_param(n: usize) -> String {
-    (0..=n).map(|i| format!("T{i}, ")).collect::<String>()
-}                                                                                                                                                            
+    (0..=n).fold("".to_string(), |mut s, i| {
+        let _ = write!(s, "T{}, ", i);
+        s
+    })
+}
 fn tup_to_fn_ident(n: usize) -> String {
-    (0..=n) 
-        .map(|i| format!(
-"            match U::try_from_int_str(self.{i}) {{
+    (0..=n).fold("".to_string(), |mut s, i| {
+        let _ = write!(
+            s,
+            "            match U::try_from_int_str(self.{i}) {{
                     Ok(ok) => ok,
                     Err(err) => {{
                         return Err(TryTupToArrErr {{
@@ -20,19 +25,24 @@ fn tup_to_fn_ident(n: usize) -> String {
                             posice: {pos},
                         }})
                  }},
-            }},\n", pos = i + 1))
-        .collect::<String>()
-}           
-            
+            }},\n",
+            pos = i + 1
+        );
+        s
+    })
+}
+
 fn tup_to_type_bound(n: usize) -> String {
-    (0..=n) 
-        .map(|i| format!("TryFromIntStr<T{i}> + "))
-        .collect::<String>()
+    (0..=n).fold("".to_string(), |mut s, i| {
+        let _ = write!(s, "TryFromIntStr<T{}> + ", i);
+        s
+    })
 }
 
 #[rustfmt::skip]
 fn tup_to_impl_code(n: usize) -> String {
-    (0..=n).map(|i| format!(
+    (0..=n).fold("".to_string(), |mut s, i| {
+        let _ = write!(s,
 "    
 impl<U, {type_param}> TryTupToArr<U> for ({type_param})
 where
@@ -53,12 +63,12 @@ where
         fn_ident = tup_to_fn_ident(i),
         type_bound = tup_to_type_bound(i),
         type_doc = generic_type_param(i).trim_end(),
-        i = i + 1,)).collect::<String>()
+        i = i + 1,); s }
+    )
 }
 
 macro_rules! try_tup_to_arr_trait {
     ($to:expr) => {
-
         #[proc_macro]
         pub fn try_tup_to_arr_impl(_item: TokenStream) -> TokenStream {
             tup_to_impl_code($to - 1).parse().unwrap()
@@ -81,6 +91,7 @@ try_tup_to_arr_trait!(8);
     not(feature = "try_tup_to_arr_64")
 ))]
 try_tup_to_arr_trait!(16);
+
 #[cfg(all(
     feature = "try_tup_to_arr_16",
     feature = "try_tup_to_arr_8",
@@ -96,6 +107,7 @@ try_tup_to_arr_trait!(16);
     not(feature = "try_tup_to_arr_64")
 ))]
 try_tup_to_arr_trait!(32);
+
 #[cfg(all(
     feature = "try_tup_to_arr_32",
     feature = "try_tup_to_arr_8",
@@ -103,6 +115,7 @@ try_tup_to_arr_trait!(32);
     not(feature = "try_tup_to_arr_64")
 ))]
 try_tup_to_arr_trait!(32);
+
 #[cfg(all(
     feature = "try_tup_to_arr_32",
     feature = "try_tup_to_arr_16",
@@ -110,6 +123,7 @@ try_tup_to_arr_trait!(32);
     not(feature = "try_tup_to_arr_64")
 ))]
 try_tup_to_arr_trait!(32);
+
 #[cfg(all(
     feature = "try_tup_to_arr_32",
     feature = "try_tup_to_arr_8",
@@ -125,6 +139,7 @@ try_tup_to_arr_trait!(32);
     not(feature = "try_tup_to_arr_32")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_8",
@@ -132,6 +147,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_32")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_16",
@@ -139,6 +155,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_32")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_32",
@@ -146,6 +163,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_16")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_8",
@@ -153,6 +171,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_32")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_8",
@@ -160,6 +179,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_16")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_16",
@@ -167,6 +187,7 @@ try_tup_to_arr_trait!(64);
     not(feature = "try_tup_to_arr_8")
 ))]
 try_tup_to_arr_trait!(64);
+
 #[cfg(all(
     feature = "try_tup_to_arr_64",
     feature = "try_tup_to_arr_8",
