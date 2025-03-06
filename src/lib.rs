@@ -22,7 +22,7 @@ fn tup_to_fn_ident(n: usize) -> String {
                     Err(err) => {{
                         return Err(TryTupToArrErr {{
                             source: err,
-                            posice: {pos},
+                            position: {pos},
                         }})
                  }},
             }},\n",
